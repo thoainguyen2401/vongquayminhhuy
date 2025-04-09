@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Vòng Quay May Mắn</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #wheel {
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 10px solid #444;
+      margin: 20px auto;
+      position: relative;
+      background: conic-gradient(
+        #FFD700 1%, #FFA500 4%, #87CEEB 10%, #90EE90 50%, #D3D3D3 100%
+      );
+    }
+    #pointer {
+      width: 0;
+      height: 0;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      border-bottom: 50px solid red;
+      margin: 0 auto;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    input {
+      padding: 10px;
+      margin: 5px;
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vòng Quay May Mắn</h1>
+  <div id="pointer"></div>
+  <div id="wheel"></div>
+  <form id="form">
+    <input type="text" id="name" placeholder="Họ tên" required><br>
+    <input type="text" id="phone" placeholder="Số điện thoại" required><br>
+    <input type="email" id="email" placeholder="Email" required><br>
+    <input type="text" id="car" placeholder="Loại xe (xe máy/ô tô)" required><br>
+    <button type="submit">Quay</button>
+  </form>
+  <h2 id="result"></h2>
+
+  <script>
+    const form = document.getElementById('form');
+    const result = document.getElementById('result');
+    const wheel = document.getElementById('wheel');
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      wheel.style.transition = 'transform 4s ease-out';
+      let deg = Math.floor(5000 + Math.random() * 2000);
+      wheel.style.transform = `rotate(${deg}deg)`;
+
+      await new Promise(resolve => setTimeout(resolve, 4000)); // Chờ vòng quay xong
+
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const car = document.getElementById('car').value;
+
+      const formData = new URLSearchParams();
+      formData.append("name", name);
+      formData.append("phone", phone);
+      formData.append("email", email);
+      formData.append("car", car);
+
+      const res = await fetch("https://script.google.com/macros/s/AKfycbwKq7VJiLBab1JljaaoxLqQbOiBR8eIPTyQnwoxeEbjnvnNLK9lNHC2V8297cz7P3HSrA/exec", {
+        method: "POST",
+        body: formData
+      });
+
+      const prize = await res.text();
+      result.innerText = "Chúc mừng bạn nhận được: " + prize;
+    };
+  </script>
+</body>
+</html>
